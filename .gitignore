@@ -1,0 +1,15 @@
+# binary files
+*.pyc
+*~
+*.ipynb
+*myconf*.json
+*.log
+*.json
+
+# dirs
+*.ipynb*
+.venv/
+*log*
+.vscode/
+__pycache__/
+venv/
