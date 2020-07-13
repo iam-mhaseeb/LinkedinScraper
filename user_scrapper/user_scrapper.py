@@ -1,2 +1,0 @@
-class UserScraper:
-    pass

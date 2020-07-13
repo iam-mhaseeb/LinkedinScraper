@@ -13,7 +13,7 @@ from utils.utils import (
     write_data
 )
 
-from user_scrapper.user_scrapper import UserScraper
+from user_scrapper.user_scraper import UserScraper
 
 from selenium.webdriver.common.keys import Keys
 
