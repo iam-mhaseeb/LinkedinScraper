@@ -56,7 +56,7 @@ def login(driver, user, pwd):
     sign_in_button.click()
 
 
-def get_profile_urls(driver, n_pages=5):
+def get_profile_urls(driver, n_pages=1):
     """
     Return a list without repetitions of alphabetically sorted URLs
     taken from the results of a given query on Google search.
