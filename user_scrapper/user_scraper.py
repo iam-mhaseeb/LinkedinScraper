@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 from bs4 import BeautifulSoup as bs
 
@@ -77,6 +78,9 @@ class UserScraper:
         education_data = []
         degree_elems = soup.select("li.pv-education-entity")
 
+        element = self.driver.find_element_by_css_selector("li.pv-education-entity")
+        ActionChains(self.driver).move_to_element(element).perform()
+
         if len(degree_elems) != 0:
 
             for elem in degree_elems:
@@ -103,6 +107,9 @@ class UserScraper:
         soup = bs(self.driver.page_source, 'html.parser')
         experience_data = []
         experience_elems = soup.select("li.v-entity__position-group-pager")
+
+        element = self.driver.find_element_by_css_selector("li.v-entity__position-group-pager")
+        ActionChains(self.driver).move_to_element(element).perform()
 
         if len(experience_elems) != 0:
 
@@ -131,6 +138,10 @@ class UserScraper:
         :return: list: skills
         """
         skills = []
+
+        element = self.driver.find_element_by_css_selector("button.pv-skills-section__additional-skills")
+        ActionChains(self.driver).move_to_element(element).perform()
+
         sleep(5)
         # wait for button to appear
         wait = WebDriverWait(self.driver, 20)
@@ -162,6 +173,9 @@ class UserScraper:
         soup = bs(self.driver.page_source, 'html.parser')
         languages = []
         languages_elements = soup.select("div.languages-expandable-content")
+
+        element = self.driver.find_element_by_css_selector("div.languages-expandable-content")
+        ActionChains(self.driver).move_to_element(element).perform()
 
         for elem in languages_elements:
             langage = elem.select("li")[0].get_text(strip=True) if elem.select("li") else ''
@@ -241,7 +255,6 @@ class UserScraper:
                 name = self.get_name()
                 job_title = self.get_job_title()
                 location = self.get_location()
-                self.driver.execute_script("document.body.style.zoom='50%'")
                 experience = self.get_experience()
                 degree = self.get_degree()
                 skills = self.get_skills()
