@@ -32,7 +32,7 @@ def user_scrapper(conf):
     sleep(0.5)
     driver.get("https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin")
     login(driver, conf['credentials']['LINUSERNAME'], conf['credentials']['LINPWD'])
-    # scraper = UserScraper(driver)
+    scraper = UserScraper(driver)
 
     for query in conf['USER_QUERIES']:
         driver.get("https://www.google.com")
@@ -65,8 +65,7 @@ def user_scrapper(conf):
             continue
 
         for url in unseen_urls:
-            # user_data = scraper.scrape_user(query, url)
-            user_data = {}
+            user_data = scraper.scrape_user(query, url)
             if user_data:
                 print_scraped_data(user_data)
                 scrapped_data.append(user_data)
