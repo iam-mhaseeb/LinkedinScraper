@@ -2,6 +2,7 @@ import json
 from time import sleep
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 from validator_collection import checkers
 
@@ -56,7 +57,7 @@ def login(driver, user, pwd):
     sign_in_button.click()
 
 
-def get_profile_urls(driver, n_pages=1):
+def get_profile_urls(driver, n_pages=5):
     """
     Return a list without repetitions of alphabetically sorted URLs
     taken from the results of a given query on Google search.
@@ -111,6 +112,36 @@ def print_scraped_data(data):
     print()
     for key in data:
         print(key + ": " + str(data[key]))
+
+
+def scroll_to_bottom(driver):
+    """
+    Scroll to botton of page
+
+    :param object: Selenium driver object
+    :return: None
+    """
+
+    old_position = 0
+    new_position = None
+
+    while new_position != old_position:
+        # Get old scroll position
+        old_position = driver.execute_script(
+                ("return (window.pageYOffset !== undefined) ?"
+                 " window.pageYOffset : (document.documentElement ||"
+                 " document.body.parentNode || document.body);"))
+        # Sleep and Scroll
+        sleep(2)
+        body = driver.find_element_by_css_selector("body")
+        body.send_keys(Keys.PAGE_DOWN)
+        sleep(2)
+        # Get new position
+        new_position = driver.execute_script(
+                ("return (window.pageYOffset !== undefined) ?"
+                 " window.pageYOffset : (document.documentElement ||"
+                 " document.body.parentNode || document.body);"))
+    sleep(5)
 
 
 def load_data(filepath):

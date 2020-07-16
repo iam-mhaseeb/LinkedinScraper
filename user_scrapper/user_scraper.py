@@ -4,10 +4,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 from bs4 import BeautifulSoup as bs
+
+from utils.utils import (
+    scroll_to_bottom
+)
 
 
 class UserScraper:
@@ -106,9 +109,9 @@ class UserScraper:
         """
         soup = bs(self.driver.page_source, 'html.parser')
         experience_data = []
-        experience_elems = soup.select("li.v-entity__position-group-pager")
+        experience_elems = soup.select("li.pv-entity__position-group-pager.pv-profile-section__list-item.ember-view")
 
-        element = self.driver.find_element_by_css_selector("li.v-entity__position-group-pager")
+        element = self.driver.find_elements_by_css_selector("li.pv-entity__position-group-pager.pv-profile-section__list-item.ember-view")[0]
         ActionChains(self.driver).move_to_element(element).perform()
 
         if len(experience_elems) != 0:
@@ -139,15 +142,17 @@ class UserScraper:
         """
         skills = []
 
-        element = self.driver.find_element_by_css_selector("button.pv-skills-section__additional-skills")
+        block_css = "button.pv-profile-section__card-action-bar.pv-skills-section__additional-skills.artdeco-container-card-action-bar.artdeco-button.artdeco-button--tertiary.artdeco-button--3.artdeco-button--fluid"
+
+        element = self.driver.find_elements_by_css_selector(block_css)[0]
         ActionChains(self.driver).move_to_element(element).perform()
 
         sleep(5)
         # wait for button to appear
         wait = WebDriverWait(self.driver, 20)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.pv-skills-section__additional-skills")))
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, block_css)))
         # Click on contact info button
-        self.driver.find_element_by_css_selector("button.pv-skills-section__additional-skills").click()
+        self.driver.find_element_by_css_selector(block_css).click()
         sleep(5)
         # wait for dialog to show
         wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div.pv-skill-categories-section__expanded")))
@@ -172,13 +177,25 @@ class UserScraper:
         """
         soup = bs(self.driver.page_source, 'html.parser')
         languages = []
-        languages_elements = soup.select("div.languages-expandable-content")
 
-        element = self.driver.find_element_by_css_selector("div.languages-expandable-content")
+        element = self.driver.find_element_by_css_selector("secion.pv-accomplishments-section")
         ActionChains(self.driver).move_to_element(element).perform()
 
+        button_selector = "secion.pv-accomplishments-section secion.languages button.pv-accomplishments-block__expand.artdeco-button.artdeco-button--circle.artdeco-button--1.artdeco-button--tertiary.ember-view"
+        sleep(5)
+        # wait for button to appear
+        wait = WebDriverWait(self.driver, 20)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, button_selector)))
+        # Click on contact info button
+        self.driver.find_element_by_css_selector(button_selector).click()
+        sleep(5)
+        # wait for dialog to show
+        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div#languages-expandable-content")))
+
+        languages_elements = soup.select("div#languages-expandable-content li h4")
+
         for elem in languages_elements:
-            langage = elem.select("li")[0].get_text(strip=True) if elem.select("li") else ''
+            langage = elem.get_text(strip=True) if elem else ''
 
             if langage:
                 languages.append(langage)
@@ -255,10 +272,11 @@ class UserScraper:
                 name = self.get_name()
                 job_title = self.get_job_title()
                 location = self.get_location()
+                # Scroll down to page once as things get loaded on scrolling
+                scroll_to_bottom(self.driver)
                 experience = self.get_experience()
                 degree = self.get_degree()
                 skills = self.get_skills()
-                languages = self.get_languages()
                 user_data = {
                     "URL": url,
                     "name": name,
@@ -267,7 +285,6 @@ class UserScraper:
                     "degree": degree,
                     "experience": experience,
                     "location": location,
-                    "languages": languages,
                     "skills": skills,
                     "contact_info": contact_info
                 }
