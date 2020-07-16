@@ -1,0 +1,13 @@
+{
+    "parameters": {
+        "CHROMEDRIVER_PATH": "C:/Program Files (x86)/chromedriver/chromedriver.exe",
+        "CHROME_PATH": "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+    },
+	"USER_QUERIES": [
+	    "site:linkedin.com/in/ AND \"software engineer\" AND \"lahore\""
+    ],
+    "credentials": {
+        "LINUSERNAME": "",
+        "LINPWD": ""
+    }
+}
